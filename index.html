@@ -10,13 +10,19 @@
 </head>
 
 <body>
+    <!-- <a href="javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+">Alert Bla</a> -->
     <div>
         <canvas id="myCanvas" width="480" height="320"></canvas>
     </div>
-
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="module">
         import paint from "./paint.js";
-
+        function a() {
+            paint.draw();
+            requestAnimationFrame(a);
+        }
+        a();
     </script>
 
 </body>
