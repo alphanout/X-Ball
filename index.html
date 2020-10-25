@@ -16,13 +16,18 @@
         <canvas id="myCanvas" width="480" height="320"></canvas>
     </div>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script type="module">
-        import paint from "./paint.js";
-        function a() {
-            paint.draw();
-            requestAnimationFrame(a);
-        }
-        a();
+    <!-- <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
+    <!-- <script src="https://unpkg.com/@webcomponents/webcomponentsjs@^2/webcomponents-bundle.js"></script> -->
+    <script nomodule src="https://unpkg.com/browser-es-module-loader/dist/babel-browser-build.js"></script>
+    <script nomodule src="https://unpkg.com/browser-es-module-loader"></script>
+    <script type="module" src="app.js">
+        // import paint from "./paint.js";
+        // var paint = require("./paint.js");
+        // function a() {
+        //     paint.draw();
+        //     requestAnimationFrame(a);
+        // }
+        // a();
     </script>
 
 </body>
