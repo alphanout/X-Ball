@@ -1,16 +1,49 @@
-// import Stats from "./node_modules/stats-js/src/Stats.js";
+document.getElementById("canvas").style.position = "relative";
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
-ctx.canvas.height = window.innerHeight;
-ctx.canvas.width = window.innerWidth;
+const canvas2 = document.getElementById("myCanvas2");
+const ctx2 = canvas.getContext("2d");
+let background = new Image();
+let angle = 0;
+let str = "https://www.vectorstock.com/royalty-free-vector/festive-balloons-real-transparency-eps-10-vector-30059705"; {
+    /* <a href="https://www.vectorstock.com/royalty-free-vector/festive-balloons-real-transparency-eps-10-vector-30059705">Festive balloons real transparency eps 10 vector by Robot</a> */
+}
+// background.src = "./background_18.png";
+background.src = "./back/p5.jpg";
+background.width = window.innerWidth;
+background.height = window.innerHeight;
+// background.onload = function(){
+//     ctx.drawImage(background,0,0);   
+// };
+// canvas2.style.position = "absolute";
+let sound = new Howl({
+    src: ['./source/sounds/barnicle.mod'],
+    volume: 0.5,
+    loop: true,
+    autoplay: true
+});
+let fps = 0;
+let fpstoshow = 0;
+let prevfpson = performance.now();
+canvas.style.position = "absolute";
+canvas.style.top = "0px";
+canvas.style.left = "0px";
+canvas2.style.top = "0px";
+canvas2.style.left = "0px";
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas2.height = window.innerHeight;
+canvas2.width = window.innerWidth;
 let paddleHeight = 10;
 let paddleWidth = 75;
 let paddleX = (canvas.width - paddleWidth) / 2;
 let ballRadius = 10;
 let x = canvas.width / 2;
 let y = canvas.height - 30;
-let dx = 8;
-let dy = -8;
+let dx = 4;
+let dy = -4;
+let mdx = 4;
+let mdy = -4;
 let rightPressed = false;
 let leftPressed = false;
 let brickRowCount = 10;
@@ -26,23 +59,35 @@ let lives = 3;
 let brickWinCount = 0;
 let brickNonWinCount = 0;
 let padding;
+let spin = 1;
+
+function showFPS() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText(fpstoshow + " fps", canvas.width / 2 - 40, 20);
+}
+
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
+
 function drawScore() {
     ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = "black";
     ctx.fillText("Score: " + score, 8, 20);
 }
+
 function mouseMoveHandler(e) {
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 && relativeX < canvas.width) {
         paddleX = relativeX - paddleWidth / 2;
     }
+    sound.play();
 }
+
 function drawLives() {
     ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = "black";
     ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 class draw {
@@ -70,7 +115,12 @@ class draw {
                 let isbreakable = (status === 1) ? ((getRndInteger(0, 10) < 5 && (brickNonWinCount <= brickWinCount / 2.25)) ? 0 : 1) : 0;
                 if (status === 1 && isbreakable === 1) brickWinCount++;
                 if (status === 1 && isbreakable === 0) brickNonWinCount++;
-                bricks[c][r] = { x: 0, y: 0, status: status, breakable: isbreakable };
+                bricks[c][r] = {
+                    x: 0,
+                    y: 0,
+                    status: status,
+                    breakable: isbreakable
+                };
             }
         }
         document.addEventListener("keydown", this.keyDownHandler, false);
@@ -86,17 +136,18 @@ class draw {
                     bricks[c][r].x = brickX;
                     bricks[c][r].y = brickY;
                     ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    // ctx.fillStyle = "#0095DD";
-                    // var gradient = ctx.createLinearGradient(brickX, brickY, brickWidth, brickHeight);
-                    // gradient.addColorStop(0, "#0095DD");
-                    // // gradient.addColorStop(1/5, "#BEBEBE");
-                    // // gradient.addColorStop(2/5, "#BEBEBE");
-                    // // gradient.addColorStop(3/5, "#660033");
-                    // // gradient.addColorStop(4/5, "#99FF99");
-                    // // gradient.addColorStop(5/5, "#CCFF99");
 
-                    ctx.fillStyle = bricks[c][r].breakable === 1 ? "#0095DD" : "#000000";
+                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    // ctx.fillStyle = "#FF0000";
+                    var img = new Image();
+                    img.src = './brick.jpg';
+                    img.width = 10;
+                    img.height = 10;
+                    // ctx.fillStyle = bricks[c][r].breakable === 1 ? ctx.drawImage(img, brickX, brickY, brickWidth, brickHeight) :
+                    // ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    ctx.fill();
+
+                    ctx.fillStyle = bricks[c][r].breakable === 1 ? "#FF0000" : "#000000";
                     // ctx.fillStyle = bricks[c][r].breakable === 1 ? gradient : "#000000";
                     ctx.fill();
                     ctx.closePath();
@@ -107,21 +158,28 @@ class draw {
     keyDownHandler(e) {
         if (e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
-        }
-        else if (e.key == "Left" || e.key == "ArrowLeft") {
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = true;
         }
     }
     keyUpHandler(e) {
         if (e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = false;
-        }
-        else if (e.key == "Left" || e.key == "ArrowLeft") {
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = false;
         }
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+        fps++;
+        showFPS();
+        if (performance.now() - prevfpson >= 999) {
+            prevfpson = performance.now();
+            fpstoshow = fps;
+            fps = 0;
+        }
+        // ctx2.clearRect(0, 0, canvas.width, canvas.height);
         draw.drawball();
         draw.drawBricks();
         draw.drawPaddle();
@@ -130,7 +188,8 @@ class draw {
         drawLives();
         x += dx;
         y += dy;
-
+        // dx += getRndInteger(0, 9) / 1000;
+        // dy += getRndInteger(0, 9) / 100;
         if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
             dx = -dx;
         }
@@ -139,19 +198,17 @@ class draw {
         } else if (y + dy > canvas.height - ballRadius) {
             if (x > paddleX && x < paddleX + paddleWidth) {
                 dy = -dy;
-            }
-            else {
+            } else {
                 lives--;
                 if (!lives) {
                     alert("GAME OVER");
                     document.location.reload();
                     // clearInterval(interval); // Needed for Chrome to end game
-                }
-                else {
+                } else {
                     x = canvas.width / 2;
                     y = canvas.height - 30;
-                    dx = 8;
-                    dy = -8;
+                    dx = 4;
+                    dy = -4;
                     paddleX = (canvas.width - paddleWidth) / 2;
                 }
             }
@@ -162,8 +219,7 @@ class draw {
             if (paddleX + paddleWidth > canvas.width) {
                 paddleX = canvas.width - paddleWidth;
             }
-        }
-        else if (leftPressed) {
+        } else if (leftPressed) {
             paddleX -= 14;
             if (paddleX < 0) {
                 paddleX = 0;
@@ -194,41 +250,42 @@ class draw {
     }
 
     static drawball() {
+        let img = new Image();
+        img.src = './red_snooker_ball.png';
+        let ballsize = 0.025;
+        ballsize = Math.floor(Math.min(canvas.width, canvas.height) * ballsize);
+        // ballsize = 20;
+        ballsize = ballRadius;
+        img.width = ballsize;
+        img.height = ballsize;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        angle += 10 * Math.PI / 180;
         ctx.beginPath();
         // ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-        // ctx.fillStyle = "#9F2308";
-        var img = new Image();
-        img.src = './red_snooker_ball.png';
-        img.width = 10;
-        img.height = 10;
-        let ballsize = 0.025;
-        // ballsize = 20;
-        ballsize = Math.floor(Math.min(canvas.width, canvas.height) * ballsize);
-        ctx.drawImage(img, x, y, ballsize, ballsize);
-        ctx.fill();
+        ctx.arc(0, 0, ballRadius, 0, Math.PI * 2, true);
         ctx.closePath();
+        ctx.clip();
+        // ctx.fillStyle = "#9F2308";
+        // ctx.drawImage(img, x, y, ballsize, ballsize);
+        ctx.drawImage(img, -ballsize / 2, -ballsize / 2, ballsize, ballsize);
+        ctx.restore();
     }
     static drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "#FFFF00";
         ctx.fill();
         ctx.closePath();
+
+        // ctx2.beginPath();
+        // ctx2.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+        // ctx2.fillStyle = "#0095De";
+        // ctx2.fill();
+        // ctx2.closePath();
     }
 }
 let obj;
 obj = (obj === undefined || obj === null) ? new draw() : obj;
-// var stats = new Stats();
-// stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-// // document.body.appendChild(stats.dom);
-
-// function animate() {
-//     stats.begin();
-//     // console.log(stats.dom);
-//     // monitored code goes here
-//     stats.end();
-//     requestAnimationFrame(animate);
-// }
-
-// requestAnimationFrame(animate);
 export default obj;
