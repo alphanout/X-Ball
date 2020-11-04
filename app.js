@@ -4,15 +4,21 @@ import paint from "./paint.js";
 function canvasSupport() {
     return !!document.createElement('testcanvas').getContext;
 }
+let sound;
+let x = document.getElementById("welcome");
+let y = document.getElementById("canvas");
+let z = document.getElementsByClassName("start")[0];
+y.style.display = "none";
 
 function playsound() {
-    var sound = new Howl({
+    sound = new Howl({
         src: ['./source/sounds/back.flac'],
         volume: 0.5,
         loop: true,
         // autoplay: true,
         // preload: true,
     });
+    
     sound.once('load', () => {
         a();
     });
@@ -21,6 +27,8 @@ function playsound() {
 let frame = null;
 
 function a() {
+    if (paint.end) sound.stop();
+
     paint.draw();
     frame = requestAnimationFrame(a);
 }
@@ -33,10 +41,7 @@ function main() {
     playsound();
 }
 
-let x = document.getElementById("welcome");
-let y = document.getElementById("canvas");
-let z = document.getElementsByClassName("start")[0];
-y.style.display = "none";
+
 
 function myFunction() {
     x.style.display = "none";

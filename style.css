@@ -1,11 +1,43 @@
 * {
+    /* background: linear-gradient(rgb(54, 49, 176), rgb(14, 16, 62)); */
     padding: 0;
     margin: 0;
     /* cursor: none; */
 }
 
+body {
+    background: linear-gradient(-45deg, #2e9217, rgb(61, 202, 212), rgb(14, 16, 62)) fixed;
+    animation: gradient 15s ease infinite;
+    background-size: 400% 400%;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    margin-top: 10%;
+    text-shadow: 1px 1px;
+    font-weight: bold;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 300%;
+}
+
 canvas {
-    background: rgb(194, 187, 187);
+    /* background: rgb(194, 187, 187); */
+    /* background: linear-gradient(rgb(54, 49, 176), rgb(14, 16, 62)); */
     display: block;
     margin: 0 auto;
 }
@@ -20,6 +52,7 @@ canvas {
     transform: translateX(-50%) translateY(-50%);
     border-radius: 3px;
 }
+
 .start p {
     font-family: 'Roboto';
     text-align: center;
@@ -27,9 +60,11 @@ canvas {
     color: #fff;
     user-select: none;
 }
+
 .start:hover {
     cursor: pointer;
 }
+
 .start:after {
     content: "";
     display: block;
